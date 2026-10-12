@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff7f0"><title>Uma proposta muito séria 👀</title>
+<style>
+:root{--ink:#29252b;--muted:#706873;--pink:#ff6f91;--cream:#fff7f0;--card:#fffdfb}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;padding:22px 14px;display:grid;place-items:center;background:radial-gradient(circle at top,#ffe0e7 0,var(--cream) 52%,#f3eaff 100%);color:var(--ink);font-family:ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer;touch-action:manipulation}.card{width:min(100%,440px);background:var(--card);border:2px solid white;border-radius:28px;padding:clamp(22px,6vw,32px);box-shadow:0 18px 55px #5c31401c;text-align:center}
+.tag{display:inline-block;padding:7px 11px;border-radius:999px;background:#fff0f3;color:#a83253;font-size:.74rem;font-weight:800;letter-spacing:.04em}.emoji{font-size:3.3rem;margin:15px 0 3px}
+h1{font-size:clamp(2rem,9vw,2.8rem);line-height:1.02;letter-spacing:-.05em;margin:10px 0 14px}h1 em{color:#ed547b;font-style:normal}
+p{color:var(--muted);line-height:1.6;margin:10px 0}.highlight{color:var(--ink);font-weight:750}.buttons{display:flex;flex-direction:column;gap:11px;margin-top:24px}
+button{border:0;border-radius:15px;padding:15px 18px;min-height:52px;font-weight:850;transition:transform .15s,background .15s}button:active{transform:scale(.97)}
+.yes{background:var(--pink);color:white;box-shadow:0 7px 18px #ff6f9135}.yes:hover{background:#f85e83}
+.no-area{position:relative;height:58px}.no{position:absolute;top:0;left:50%;transform:translateX(-50%);background:#f1edf0;color:#69616a;border:1px solid #e6dfe5;white-space:nowrap}
+.hint{min-height:22px;font-size:.83rem;color:#a83253;margin-top:9px}.result{display:none;margin-top:18px;border-radius:19px;padding:18px 16px;background:#f4fbe9;border:1px solid #d9efc5;animation:pop .35s ease-out}.result.show{display:block}.result .emoji{font-size:2.6rem;margin:0 0 7px}.result h2{margin:7px 0;font-size:1.55rem;letter-spacing:-.03em}.result p{color:#4e6044}.fine{font-size:.75rem;color:#a49aa4;margin-top:20px}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<main class="card">
+<div class="tag">📋 SE LIGA...</div><div class="emoji" aria-hidden="true">👀🏡</div>
+<h1>Tenho uma ideia<br><em>pra gente.</em></h1>
+<p class="highlight">E se a gente alugasse um lugar legal pra passar esse fds??</p>
+<p>Comida boa, descanso e entretenimento. Parece suspeitamente bom, né?</p>
+<div class="buttons"><button class="yes" id="yes">SIM, VAMOS PLANEJAR 😌❤️</button><div class="no-area" id="noArea"><button class="no" id="no">Não 🙄</button></div></div>
+<div class="hint" id="hint" aria-live="polite"></div>
+<section class="result" id="result" aria-live="polite"><div class="emoji">🎉🫶</div><h2>Fechado? 👀</h2>
+<p>Então ajuda a procurar o lugar pra gente kkkkkk, precinho bom pra gente tbm.</p><p><strong>Não vai se arrepender.</strong></p></section>
+</main>
+<script>
+
+const $ = id => document.getElementById(id);
+
+const yes = $('yes');
+const no = $('no');
+const area = $('noArea');
+const hint = $('hint');
+const result = $('result');
+
+let attempts = 0;
+
+const messages = [
+    'Opa, esse botão parece estar com defeito. 🤨',
+    'Tem certeza? O lugar já tá em mente 😂',
+    'O botão entrou em modo fuga! 🏃',
+    'Pensa no conforto, na comida e na companhia... 👀',
+    'Um lugarzinho aconchegante, só a gente. ❤️',
+    'Prometo que a proposta é interessante! 🤝',
+    'Botão tá tímido? 😌',
+    'Você vai mesmo ignorar essa oportunidade? 🥹',
+    'Imagina o descanso depois de uma semana cansativa... 😴',
+    'Um rolê diferente pra gente sair da rotina! 💕',
+    'O botão não aguenta maisss',
+    'Considera essa proposta com carinho, vai! 🫶',
+    'Tem comida boa envolvida nessa negociação. 🍕',
+    'Última chance... brincadeira, tem mais! 😈',
+    'Si vc aceitar o botão para de fugir...'
+];
+
+function moveNo() {
+    const maxX = Math.max(0, area.clientWidth - no.offsetWidth);
+    const maxY = Math.max(0, area.clientHeight - no.offsetHeight);
+
+    no.style.left = Math.round(Math.random() * maxX) + 'px';
+    no.style.top = Math.round(Math.random() * maxY) + 'px';
+    no.style.transform = 'none';
+}
+
+function showNextMessage() {
+    hint.textContent = messages[attempts % messages.length];
+    attempts++;
+}
+
+no.addEventListener('pointerenter', e => {
+    if (e.pointerType === 'mouse') {
+        showNextMessage();
+        moveNo();
+    }
+});
+
+no.addEventListener('click', () => {
+    showNextMessage();
+    moveNo();
+});
+
+yes.addEventListener('click', () => {
+    result.classList.add('show');
+    yes.textContent = 'PROPOSTA ACEITA! 🥳';
+    hint.textContent = '';
+
+    result.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+    });
+
+    for (let i = 0; i < 16; i++) {
+        const bit = document.createElement('span');
+
+        bit.textContent = ['✨', '💚', '🎉', '💕'][
+            Math.floor(Math.random() * 4)
+        ];
+
+        bit.style.cssText = `
+            position: fixed;
+            left: ${Math.random() * 100}vw;
+            top: -25px;
+            font-size: ${16 + Math.random() * 15}px;
+            z-index: 5;
+            pointer-events: none;
+            transition: transform 1.8s ease-in, opacity 1.8s;
+        `;
+
+        document.body.appendChild(bit);
+
+        requestAnimationFrame(() => {
+            bit.style.transform =
+                `translateY(${innerHeight + 50}px) rotate(${Math.random() * 500}deg)`;
+            bit.style.opacity = '.1';
+        });
+
+        setTimeout(() => bit.remove(), 2000);
+    }
+});
+
+</script></body></html>
